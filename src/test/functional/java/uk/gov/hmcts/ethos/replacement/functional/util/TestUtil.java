@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.beans.factory.annotation.Value;
 import uk.gov.hmcts.ecm.common.model.bulk.BulkRequest;
 import uk.gov.hmcts.ecm.common.model.ccd.CCDRequest;
 import java.io.File;
@@ -36,12 +37,13 @@ public class TestUtil {
     private String topLevel;
     private String childLevel;
 
+    @Value("${test-url}")
     private String environment;
 
     private static String downloadedFilePath;
 
     public TestUtil() {
-        environment = System.getProperty("VAULTNAME").replace("ethos-", "");
+         environment = System.getProperty("VAULTNAME").replace("ethos-", "");
     }
 
     //End-point /generateDocument
@@ -370,8 +372,7 @@ public class TestUtil {
         httpRequest.header("Authorization", authToken);
         httpRequest.header("Content-Type", ContentType.JSON);
         httpRequest.body(ccdRequest);
-        Response response = httpRequest.post(ResponseUtil.getProperty(environment.toLowerCase()
-                + ".docmosis.api.url") + uri);
+        Response response = httpRequest.post(ResponseUtil.getProperty(environment.toLowerCase()) + uri);
 
         Assert.assertEquals(expectedStatusCode, response.getStatusCode());
         return response;
@@ -390,8 +391,7 @@ public class TestUtil {
         httpRequest.header("Authorization", authToken);
         httpRequest.header("Content-Type", ContentType.JSON);
         httpRequest.body(bulkRequest);
-        Response response = httpRequest.post(ResponseUtil.getProperty(environment.toLowerCase()
-                + ".docmosis.api.url") + uri);
+        Response response = httpRequest.post(ResponseUtil.getProperty(environment.toLowerCase()) + uri);
 
         Assert.assertEquals(expectedStatusCode, response.getStatusCode());
         return response;

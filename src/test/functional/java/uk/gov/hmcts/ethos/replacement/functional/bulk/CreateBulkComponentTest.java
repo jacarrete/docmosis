@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import uk.gov.hmcts.ecm.common.model.bulk.BulkRequest;
 import uk.gov.hmcts.ecm.common.model.ccd.CCDRequest;
 import uk.gov.hmcts.ethos.replacement.functional.ComponentTest;
+import uk.gov.hmcts.ethos.replacement.functional.FunctionalTest;
 import uk.gov.hmcts.ethos.replacement.functional.util.Constants;
 import uk.gov.hmcts.ethos.replacement.functional.util.TestUtil;
 
@@ -41,6 +42,7 @@ public class CreateBulkComponentTest {
     }
 
     @Test
+//    @Category(FunctionalTest.class)
     public void create_bulk_eng_individual_claimant_not_represented() throws IOException {
         caseList.clear();
         caseList.add(Constants.TEST_DATA_ENG_BULK1_CASE1);

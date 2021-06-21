@@ -91,19 +91,16 @@ task smoke(type: Test, description: 'Runs the smoke tests.', group: 'Verificatio
     useJUnit {
         includeCategories 'uk.gov.hmcts.ethos.replacement.functional.SmokeTest'
     }
-    systemProperty('VAULTNAME', System.getenv('VAULTNAME'))
+    systemProperty('TEST_URL', System.getenv('TEST_URL'))
 }
 
 task functional(type: Test, description: 'Runs the functional tests.', group: 'Verification') {
     testClassesDirs = sourceSets.functional.output.classesDirs
     classpath = sourceSets.functional.runtimeClasspath
-
+    systemProperty('TEST_URL', System.getenv('TEST_URL'))
     useJUnit {
-        includeCategories 'uk.gov.hmcts.ethos.replacement.functional.SmokeTest'
+        includeCategories 'uk.gov.hmcts.ethos.replacement.functional.FunctionalTest'
     }
-
-    systemProperty('VAULTNAME', System.getenv('VAULTNAME'))
-
     maxHeapSize = '1G'
 }
 
