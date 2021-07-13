@@ -186,7 +186,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.retry:spring-retry'
 
-    implementation 'org.postgresql:postgresql:42.2.22'
+    implementation 'org.postgresql:postgresql:42.2.23'
 
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: versions.springfoxSwagger
