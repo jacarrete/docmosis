@@ -62,6 +62,18 @@ public class DocumentHelper {
 
     private static final String VENUE_ADDRESS_OPENING_PROCESSING_ERROR = "Failed while opening or "
             + "processing the entries for the venueAddressValues.xlsx file : ---> ";
+    private static final String CLAIMANT_OR_REP_FULL_NAME = "\"claimant_or_rep_full_name\":\"";
+    private static final String USER_IMAGE = "[userImage:";
+    private static final String ENHMCTS_PNG = "enhmcts.png]";
+    private static final String ISCOT = "\"iScot";
+    private static final String SCHMCTS_PNG = "schmcts.png]";
+    private static final String CLAIMANT_FULL_NAME = "\"claimant_full_name\":\"";
+    private static final String CLAIMANT = "\"Claimant\":\"";
+    private static final String RESPONDENT_OR_REP_FULL_NAME = "\"respondent_or_rep_full_name\":\"";
+    private static final String HEARING_DATE = "\"Hearing_date\":\"";
+    private static final String HEARING_DATE_TIME = "\"Hearing_date_time\":\"";
+    private static final String HEARING_TIME = "\"Hearing_time\":\"";
+    private static final String COLON = "\":\"";
 
     public static StringBuilder buildDocumentContent(CaseData caseData, String accessKey,
                                                      UserDetails userDetails, String caseTypeId,
@@ -102,22 +114,22 @@ public class DocumentHelper {
         log.info("Check template names");
         sb.append("\"i").append(getEWSectionName(correspondenceType)
                 .replace(".", "_"))
-                .append("_enhmcts\":\"").append("[userImage:").append("enhmcts.png]").append(NEW_LINE);
+                .append("_enhmcts\":\"").append(USER_IMAGE).append(ENHMCTS_PNG).append(NEW_LINE);
         sb.append("\"i").append(getEWSectionName(correspondenceType)
                 .replace(".", "_"))
-                .append("_enhmcts1\":\"").append("[userImage:").append("enhmcts.png]").append(NEW_LINE);
+                .append("_enhmcts1\":\"").append(USER_IMAGE).append(ENHMCTS_PNG).append(NEW_LINE);
         sb.append("\"i").append(getEWSectionName(correspondenceType)
                 .replace(".", "_"))
-                .append("_enhmcts2\":\"").append("[userImage:").append("enhmcts.png]").append(NEW_LINE);
-        sb.append("\"iScot").append(getScotSectionName(correspondenceScotType)
+                .append("_enhmcts2\":\"").append(USER_IMAGE).append(ENHMCTS_PNG).append(NEW_LINE);
+        sb.append(ISCOT).append(getScotSectionName(correspondenceScotType)
                 .replace(".", "_"))
-                .append("_schmcts\":\"").append("[userImage:").append("schmcts.png]").append(NEW_LINE);
-        sb.append("\"iScot").append(getScotSectionName(correspondenceScotType)
+                .append("_schmcts\":\"").append(USER_IMAGE).append(SCHMCTS_PNG).append(NEW_LINE);
+        sb.append(ISCOT).append(getScotSectionName(correspondenceScotType)
                 .replace(".", "_"))
-                .append("_schmcts1\":\"").append("[userImage:").append("schmcts.png]").append(NEW_LINE);
-        sb.append("\"iScot").append(getScotSectionName(correspondenceScotType)
+                .append("_schmcts1\":\"").append(USER_IMAGE).append(SCHMCTS_PNG).append(NEW_LINE);
+        sb.append(ISCOT).append(getScotSectionName(correspondenceScotType)
                 .replace(".", "_"))
-                .append("_schmcts2\":\"").append("[userImage:").append("schmcts.png]").append(NEW_LINE);
+                .append("_schmcts2\":\"").append(USER_IMAGE).append(SCHMCTS_PNG).append(NEW_LINE);
 
         log.info("Clerk info");
         String userName = nullCheck(userDetails.getFirstName() + " " + userDetails.getLastName());
@@ -163,7 +175,7 @@ public class DocumentHelper {
         if (representedTypeC != null && caseData.getClaimantRepresentedQuestion() != null &&  caseData
                 .getClaimantRepresentedQuestion().equals(YES)) {
             log.info("Claimant represented");
-            sb.append("\"claimant_or_rep_full_name\":\"").append(nullCheck(representedTypeC.getNameOfRepresentative()))
+            sb.append(CLAIMANT_OR_REP_FULL_NAME).append(nullCheck(representedTypeC.getNameOfRepresentative()))
                     .append(NEW_LINE);
             sb.append("\"claimant_rep_organisation\":\"").append(nullCheck(representedTypeC.getNameOfOrganisation()))
                     .append(NEW_LINE);
@@ -176,19 +188,19 @@ public class DocumentHelper {
                     .append(NEW_LINE);
             Optional<String> claimantTypeOfClaimant = Optional.ofNullable(caseData.getClaimantTypeOfClaimant());
             if (claimantIndType.isPresent()) {
-                sb.append("\"claimant_full_name\":\"").append(nullCheck(claimantIndType.get().claimantFullName()))
+                sb.append(CLAIMANT_FULL_NAME).append(nullCheck(claimantIndType.get().claimantFullName()))
                         .append(NEW_LINE);
-                sb.append("\"Claimant\":\"").append(nullCheck(claimantIndType.get().claimantFullName()))
+                sb.append(CLAIMANT).append(nullCheck(claimantIndType.get().claimantFullName()))
                         .append(NEW_LINE);
             } else if (claimantTypeOfClaimant.isPresent() && caseData.getClaimantTypeOfClaimant()
                     .equals(COMPANY_TYPE_CLAIMANT)) {
                 log.info("Claimant Company");
-                sb.append("\"claimant_full_name\":\"").append(nullCheck(caseData.getClaimantCompany()))
+                sb.append(CLAIMANT_FULL_NAME).append(nullCheck(caseData.getClaimantCompany()))
                         .append(NEW_LINE);
-                sb.append("\"Claimant\":\"").append(nullCheck(caseData.getClaimantCompany())).append(NEW_LINE);
+                sb.append(CLAIMANT).append(nullCheck(caseData.getClaimantCompany())).append(NEW_LINE);
             } else {
-                sb.append("\"claimant_full_name\":\"").append(NEW_LINE);
-                sb.append("\"Claimant\":\"").append(NEW_LINE);
+                sb.append(CLAIMANT_FULL_NAME).append(NEW_LINE);
+                sb.append(CLAIMANT).append(NEW_LINE);
             }
         } else {
             log.info("Claimant not represented");
@@ -196,24 +208,24 @@ public class DocumentHelper {
             if (claimantTypeOfClaimant.isPresent() && caseData.getClaimantTypeOfClaimant()
                     .equals(COMPANY_TYPE_CLAIMANT)) {
                 log.info("Claimant Company");
-                sb.append("\"claimant_or_rep_full_name\":\"").append(nullCheck(caseData.getClaimantCompany()))
+                sb.append(CLAIMANT_OR_REP_FULL_NAME).append(nullCheck(caseData.getClaimantCompany()))
                         .append(NEW_LINE);
-                sb.append("\"claimant_full_name\":\"").append(nullCheck(caseData.getClaimantCompany()))
+                sb.append(CLAIMANT_FULL_NAME).append(nullCheck(caseData.getClaimantCompany()))
                         .append(NEW_LINE);
-                sb.append("\"Claimant\":\"").append(nullCheck(caseData.getClaimantCompany())).append(NEW_LINE);
+                sb.append(CLAIMANT).append(nullCheck(caseData.getClaimantCompany())).append(NEW_LINE);
             } else {
                 log.info("Claimant data");
                 if (claimantIndType.isPresent()) {
-                    sb.append("\"claimant_or_rep_full_name\":\"").append(nullCheck(claimantIndType.get()
+                    sb.append(CLAIMANT_OR_REP_FULL_NAME).append(nullCheck(claimantIndType.get()
                             .claimantFullName())).append(NEW_LINE);
-                    sb.append("\"claimant_full_name\":\"").append(nullCheck(claimantIndType.get().claimantFullName()))
+                    sb.append(CLAIMANT_FULL_NAME).append(nullCheck(claimantIndType.get().claimantFullName()))
                             .append(NEW_LINE);
-                    sb.append("\"Claimant\":\"").append(nullCheck(claimantIndType.get().claimantFullName()))
+                    sb.append(CLAIMANT).append(nullCheck(claimantIndType.get().claimantFullName()))
                             .append(NEW_LINE);
                 } else {
-                    sb.append("\"claimant_or_rep_full_name\":\"").append(NEW_LINE);
-                    sb.append("\"claimant_full_name\":\"").append(NEW_LINE);
-                    sb.append("\"Claimant\":\"").append(NEW_LINE);
+                    sb.append(CLAIMANT_OR_REP_FULL_NAME).append(NEW_LINE);
+                    sb.append(CLAIMANT_FULL_NAME).append(NEW_LINE);
+                    sb.append(CLAIMANT).append(NEW_LINE);
                     sb.append("\"claimant_rep_organisation\":\"").append(NEW_LINE);
                 }
             }
@@ -266,7 +278,7 @@ public class DocumentHelper {
         if (representedTypeRList != null && !representedTypeRList.isEmpty()) {
             log.info("Respondent represented");
             var representedTypeR = representedTypeRList.get(0).getValue();
-            sb.append("\"respondent_or_rep_full_name\":\"").append(nullCheck(representedTypeR
+            sb.append(RESPONDENT_OR_REP_FULL_NAME).append(nullCheck(representedTypeR
                     .getNameOfRepresentative())).append(NEW_LINE);
             if (representedTypeR.getRepresentativeAddress() != null) {
                 sb.append(getRespondentOrRepAddressUK(representedTypeR.getRepresentativeAddress()));
@@ -281,11 +293,11 @@ public class DocumentHelper {
             log.info("Respondent not represented");
             if (caseData.getRespondentCollection() != null && !caseData.getRespondentCollection().isEmpty()) {
                 var respondentSumType = caseData.getRespondentCollection().get(0).getValue();
-                sb.append("\"respondent_or_rep_full_name\":\"").append(nullCheck(respondentSumType
+                sb.append(RESPONDENT_OR_REP_FULL_NAME).append(nullCheck(respondentSumType
                         .getRespondentName())).append(NEW_LINE);
                 sb.append(getRespondentOrRepAddressUK(getRespondentAddressET3(respondentSumType)));
             } else {
-                sb.append("\"respondent_or_rep_full_name\":\"").append(NEW_LINE);
+                sb.append(RESPONDENT_OR_REP_FULL_NAME).append(NEW_LINE);
                 sb.append("\"respondent_rep_organisation\":\"").append(NEW_LINE);
                 sb.append(getRespondentOrRepAddressUK(new Address()));
             }
@@ -358,26 +370,26 @@ public class DocumentHelper {
             log.info("Hearing type info by number");
             if (hearingType.getHearingDateCollection() != null && !hearingType.getHearingDateCollection().isEmpty()) {
                 log.info("Hearing dates collection");
-                sb.append("\"Hearing_date\":\"").append(nullCheck(getHearingDates(hearingType
+                sb.append(HEARING_DATE).append(nullCheck(getHearingDates(hearingType
                         .getHearingDateCollection()))).append(NEW_LINE);
                 String hearingDateAndTime = nullCheck(getHearingDatesAndTime(hearingType.getHearingDateCollection()));
-                sb.append("\"Hearing_date_time\":\"").append(hearingDateAndTime).append(NEW_LINE);
-                sb.append("\"Hearing_time\":\"").append(getHearingTime(hearingDateAndTime)).append(NEW_LINE);
+                sb.append(HEARING_DATE_TIME).append(hearingDateAndTime).append(NEW_LINE);
+                sb.append(HEARING_TIME).append(getHearingTime(hearingDateAndTime)).append(NEW_LINE);
             } else {
-                sb.append("\"Hearing_date\":\"").append(NEW_LINE);
-                sb.append("\"Hearing_date_time\":\"").append(NEW_LINE);
-                sb.append("\"Hearing_time\":\"").append(NEW_LINE);
+                sb.append(HEARING_DATE).append(NEW_LINE);
+                sb.append(HEARING_DATE_TIME).append(NEW_LINE);
+                sb.append(HEARING_TIME).append(NEW_LINE);
             }
             log.info("Checking hearing venue and duration");
             sb.append("\"Hearing_venue\":\"").append(nullCheck(getVenueAddress(
                     hearingType, caseTypeId, venueAddressInputStream))).append(NEW_LINE);
             sb.append("\"Hearing_duration\":\"").append(nullCheck(getHearingDuration(hearingType))).append(NEW_LINE);
         } else {
-            sb.append("\"Hearing_date\":\"").append(NEW_LINE);
-            sb.append("\"Hearing_date_time\":\"").append(NEW_LINE);
+            sb.append(HEARING_DATE).append(NEW_LINE);
+            sb.append(HEARING_DATE_TIME).append(NEW_LINE);
             sb.append("\"Hearing_venue\":\"").append(NEW_LINE);
             sb.append("\"Hearing_duration\":\"").append(NEW_LINE);
-            sb.append("\"Hearing_time\":\"").append(NEW_LINE);
+            sb.append(HEARING_TIME).append(NEW_LINE);
         }
         return sb;
     }
@@ -661,7 +673,7 @@ public class DocumentHelper {
         var sb = new StringBuilder();
         if (!sectionName.equals("")) {
             sb.append("\"").append("t").append(sectionName.replace(".", "_"))
-                    .append("\":\"").append("true").append(NEW_LINE);
+                    .append(COLON).append("true").append(NEW_LINE);
         }
         return sb;
     }
@@ -672,7 +684,7 @@ public class DocumentHelper {
         var sb = new StringBuilder();
         if (!scotSectionName.equals("")) {
             sb.append("\"").append("t_Scot_").append(scotSectionName.replace(".", "_"))
-                    .append("\":\"").append("true").append(NEW_LINE);
+                    .append(COLON).append("true").append(NEW_LINE);
         }
         return sb;
     }
@@ -866,7 +878,7 @@ public class DocumentHelper {
         var sb = new StringBuilder();
         String lineNumber = "0" + lineNum;
         sb.append("\"").append(LABEL).append(labelNumber).append("_Address_Line_").append(lineNumber)
-                .append("\":\"").append(addressLine).append(NEW_LINE);
+                .append(COLON).append(addressLine).append(NEW_LINE);
         return sb;
     }
 
