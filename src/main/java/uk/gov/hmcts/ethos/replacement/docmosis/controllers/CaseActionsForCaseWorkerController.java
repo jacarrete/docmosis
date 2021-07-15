@@ -78,7 +78,7 @@ public class CaseActionsForCaseWorkerController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    @Deprecated public ResponseEntity<CCDCallbackResponse> retrieveCase(
+    public ResponseEntity<CCDCallbackResponse> retrieveCase(
             @RequestBody CCDRequest ccdRequest,
             @RequestHeader(value = "Authorization") String userToken) {
         log.info("RETRIEVE CASE ---> " + LOG_MESSAGE + ccdRequest.getCaseDetails().getCaseId());
@@ -116,7 +116,7 @@ public class CaseActionsForCaseWorkerController {
 
         List<SubmitEvent> submitEvents = caseRetrievalForCaseWorkerService.casesRetrievalRequest(ccdRequest, userToken);
         log.info("Cases received: " + submitEvents.size());
-        submitEvents.forEach(submitEvent -> System.out.println(submitEvent.getCaseId()));
+        submitEvents.forEach(submitEvent -> log.info(String.valueOf(submitEvent.getCaseId() + '\n')));
 
         return getCallbackRespEntityNoErrors(ccdRequest.getCaseDetails().getCaseData());
     }

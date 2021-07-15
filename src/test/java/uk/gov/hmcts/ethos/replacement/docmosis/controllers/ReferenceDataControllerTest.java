@@ -75,7 +75,7 @@ public class ReferenceDataControllerTest {
     @Test
     public void hearingVenueReferenceData() throws Exception {
         when(referenceService.fetchHearingVenueRefData(isA(CaseDetails.class), eq(AUTH_TOKEN))).thenReturn(submitEvent.getCaseData());
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(HEARING_VENUE_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -89,7 +89,7 @@ public class ReferenceDataControllerTest {
     @Test
     public void dateListedReferenceData() throws Exception {
         when(referenceService.fetchDateListedRefData(isA(CaseDetails.class), eq(AUTH_TOKEN))).thenReturn(submitEvent.getCaseData());
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(DATE_LISTED_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -121,7 +121,7 @@ public class ReferenceDataControllerTest {
     @Test
     public void hearingVenueReferenceDataError500() throws Exception {
         when(referenceService.fetchHearingVenueRefData(isA(CaseDetails.class), eq(AUTH_TOKEN))).thenThrow(new InternalException(ERROR_MESSAGE));
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(HEARING_VENUE_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -132,7 +132,7 @@ public class ReferenceDataControllerTest {
     @Test
     public void dateListedReferenceDataError500() throws Exception {
         when(referenceService.fetchDateListedRefData(isA(CaseDetails.class), eq(AUTH_TOKEN))).thenThrow(new InternalException(ERROR_MESSAGE));
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(DATE_LISTED_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -142,7 +142,7 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void hearingVenueReferenceDataForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(HEARING_VENUE_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -152,7 +152,7 @@ public class ReferenceDataControllerTest {
 
     @Test
     public void dateListedReferenceDataForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(DATE_LISTED_REFERENCE_DATA)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)

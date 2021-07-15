@@ -2,9 +2,17 @@ package uk.gov.hmcts.ethos.replacement.docmosis.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import static org.hamcrest.Matchers.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,6 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.ecm.common.model.ccd.DocumentInfo;
@@ -22,20 +33,6 @@ import uk.gov.hmcts.ethos.replacement.docmosis.service.excel.MultipleDocGenerati
 import uk.gov.hmcts.ethos.replacement.docmosis.service.excel.MultipleLetterService;
 import uk.gov.hmcts.ethos.replacement.docmosis.service.excel.MultipleScheduleService;
 import uk.gov.hmcts.ethos.replacement.docmosis.utils.InternalException;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.ethos.replacement.docmosis.utils.InternalException.ERROR_MESSAGE;
 
 @RunWith(SpringRunner.class)
@@ -85,8 +82,8 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printSchedule() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
-        when(multipleScheduleService.bulkScheduleLogic(eq(AUTH_TOKEN), isA(MultipleDetails.class), isA(List.class))).thenReturn(documentInfo);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
+        when(multipleScheduleService.bulkScheduleLogic(eq(AUTH_TOKEN), isA(MultipleDetails.class), anyList())).thenReturn(documentInfo);
         mvc.perform(post(PRINT_SCHEDULE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -99,9 +96,9 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printLetter() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         when(multipleLetterService.bulkLetterLogic(eq(AUTH_TOKEN), isA(MultipleDetails.class),
-                isA(List.class), isA(Boolean.class))).thenReturn(documentInfo);
+                anyList(), isA(Boolean.class))).thenReturn(documentInfo);
         mvc.perform(post(PRINT_LETTER_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -114,7 +111,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printDocumentConfirmation() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(PRINT_DOCUMENT_CONFIRMATION_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -127,7 +124,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void midSelectedAddressLabelsMultiple() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(MID_SELECTED_ADDRESS_LABELS_MULTIPLE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -140,7 +137,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void midValidateAddressLabelsMultiple() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(MID_VALIDATE_ADDRESS_LABELS_MULTIPLE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -199,8 +196,8 @@ public class MultipleDocGenerationControllerTest {
     @Test
     public void printScheduleError500() throws Exception {
         doThrow(new InternalException(ERROR_MESSAGE)).when(multipleScheduleService).bulkScheduleLogic(
-                eq(AUTH_TOKEN), isA(MultipleDetails.class), isA(List.class));
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+                eq(AUTH_TOKEN), isA(MultipleDetails.class), anyList());
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(PRINT_SCHEDULE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -211,8 +208,8 @@ public class MultipleDocGenerationControllerTest {
     @Test
     public void printLetterError500() throws Exception {
         when(multipleLetterService.bulkLetterLogic(eq(AUTH_TOKEN), isA(MultipleDetails.class),
-                isA(List.class), isA(Boolean.class))).thenThrow(new InternalException(ERROR_MESSAGE));
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(true);
+                anyList(), isA(Boolean.class))).thenThrow(new InternalException(ERROR_MESSAGE));
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(true);
         mvc.perform(post(PRINT_LETTER_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -222,7 +219,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printScheduleForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(PRINT_SCHEDULE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -232,7 +229,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printLetterForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(PRINT_LETTER_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -242,7 +239,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void printDocumentConfirmationForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(PRINT_DOCUMENT_CONFIRMATION_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -252,7 +249,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void midSelectedAddressLabelsMultipleForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(MID_SELECTED_ADDRESS_LABELS_MULTIPLE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)
@@ -262,7 +259,7 @@ public class MultipleDocGenerationControllerTest {
 
     @Test
     public void midValidateAddressLabelsMultipleForbidden() throws Exception {
-        when(verifyTokenService.verifyTokenSignature(eq(AUTH_TOKEN))).thenReturn(false);
+        when(verifyTokenService.verifyTokenSignature(AUTH_TOKEN)).thenReturn(false);
         mvc.perform(post(MID_VALIDATE_ADDRESS_LABELS_MULTIPLE_URL)
                 .content(requestContent.toString())
                 .header("Authorization", AUTH_TOKEN)

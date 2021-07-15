@@ -60,7 +60,7 @@ public class BulkActionsController {
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
 
-    @Deprecated public ResponseEntity<BulkCallbackResponse> createBulk(
+     public ResponseEntity<BulkCallbackResponse> createBulk(
             @RequestBody BulkRequest bulkRequest,
             @RequestHeader(value = "Authorization") String userToken) {
         log.info("CREATE BULK ---> " + LOG_MESSAGE + bulkRequest.getCaseDetails().getCaseId());
