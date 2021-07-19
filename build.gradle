@@ -213,7 +213,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-ext', version: '2.0.0-alpha1'
 
     //To Remove vulnerability CVE-2021-21409
-    implementation group: 'io.netty', name: 'netty-codec-http2', version: '4.1.61.Final'
+    implementation group: 'io.netty', name: 'netty-codec-http2', version: '4.1.66.Final'
 
 
     //To Remove vulnerability CVE-2021-21295
