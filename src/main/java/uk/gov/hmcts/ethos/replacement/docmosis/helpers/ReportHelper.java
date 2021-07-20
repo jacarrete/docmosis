@@ -115,10 +115,24 @@ public class ReportHelper {
                     localReportsDetailList.add(localReportsDetailItem);
                 }
             }
+
             var localReportsDetailHdr = new AdhocReportType();
             localReportsDetailHdr.setReportOffice(UtilHelper.getListingCaseTypeId(listingDetails.getCaseTypeId()));
             listingDetails.getCaseData().setLocalReportsDetailHdr(localReportsDetailHdr);
             listingDetails.getCaseData().setLocalReportsDetail(localReportsDetailList);
+
+            var localReportsSummaryHdr = new AdhocReportType();
+            var singlesTotal = localReportsDetailList.stream().distinct()
+                    .filter(reportItem->reportItem.getValue().getCaseType().equals(SINGLE_CASE_TYPE)).count();
+            localReportsSummaryHdr.setSinglesTotal(String.valueOf(singlesTotal));
+
+            var multiplesTotal = localReportsDetailList.stream().distinct()
+                    .filter(reportItem->reportItem.getValue().getCaseType().equals(MULTIPLE_CASE_TYPE)).count();
+            localReportsSummaryHdr.setMultiplesTotal(String.valueOf(multiplesTotal));
+
+            var total = singlesTotal + multiplesTotal;
+            localReportsSummaryHdr.setTotal(String.valueOf(total));
+            listingDetails.getCaseData().setLocalReportsSummaryHdr(localReportsSummaryHdr);
 
         }
 
