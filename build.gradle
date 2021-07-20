@@ -194,6 +194,8 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.0.8'
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.8'
     implementation 'com.github.hmcts:ecm-common:0.1.115'
 
 // For pdfbox and elasticsearch CVEs
