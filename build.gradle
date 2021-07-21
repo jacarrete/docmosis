@@ -166,7 +166,6 @@ dependencyCheck {
 repositories {
     mavenCentral()
     jcenter()
-    maven { url "https://dl.bintray.com/hmcts/hmcts-maven" }
     maven { url "https://repo.maven.apache.org/maven2" }
     maven { url 'https://repo.spring.io/libs-milestone' }
     maven { url "https://jitpack.io" }
@@ -180,6 +179,8 @@ def versions = [
 ]
 
 dependencies {
+    implementation 'com.github.hmcts:ecm-common:0.1.116'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
@@ -194,8 +195,6 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-    implementation 'com.github.hmcts:ecm-common:0.1.103'
-
 // For pdfbox and elasticsearch CVEs
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
     implementation('org.elasticsearch:elasticsearch') {
@@ -203,7 +202,6 @@ dependencies {
             strictly '7.13.2'
         }
     }
-
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.5.RELEASE'
 
     //to remove vulnerability CVE-2020-11987

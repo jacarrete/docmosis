@@ -145,7 +145,7 @@ public class ReportDocHelperTest {
                 "\"Report_List\":[\n" +
                 "{\"Case_Reference\":\"2122324/2020\",\n" +
                 "\"Position\":\"Position2\",\n" +
-                "\"Conciliation_Track_No\":\"223\",\n" +
+                "\"Conciliation_Track\":\"No Conciliation\",\n" +
                 "\"Session_Days\":\"\",\n" +
                 "\"Hearing_Number\":\"3\",\n" +
                 "\"Hearing_Date\":\"12 October 2020\",\n" +
@@ -154,7 +154,7 @@ public class ReportDocHelperTest {
                 "\"Hearing_Clerk\":\"Hearing Clerk\"},\n" +
                 "{\"Case_Reference\":\"2122323/2020\",\n" +
                 "\"Position\":\"Position5\",\n" +
-                "\"Conciliation_Track_No\":\"222\",\n" +
+                "\"Conciliation_Track\":\"No Conciliation\",\n" +
                 "\"Session_Days\":\"\",\n" +
                 "\"Hearing_Number\":\"5\",\n" +
                 "\"Hearing_Date\":\"15 October 2020\",\n" +

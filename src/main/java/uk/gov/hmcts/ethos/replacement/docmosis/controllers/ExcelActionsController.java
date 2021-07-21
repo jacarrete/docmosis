@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ecm.common.helpers.UtilHelper;
 import uk.gov.hmcts.ecm.common.model.ccd.CCDCallbackResponse;
+import uk.gov.hmcts.ecm.common.model.listing.ListingCallbackResponse;
+import uk.gov.hmcts.ecm.common.model.listing.ListingRequest;
 import uk.gov.hmcts.ecm.common.model.multiples.MultipleCallbackResponse;
 import uk.gov.hmcts.ecm.common.model.multiples.MultipleRequest;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.MultiplesHelper;
@@ -26,7 +28,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static uk.gov.hmcts.ecm.common.model.helper.Constants.OPEN_STATE;
 import static uk.gov.hmcts.ethos.replacement.docmosis.helpers.CallbackRespHelper.getMultipleCallbackRespEntity;
-
+import static uk.gov.hmcts.ethos.replacement.docmosis.helpers.CallbackRespHelper.getListingCallbackRespEntity;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -418,6 +420,36 @@ public class ExcelActionsController {
         return getMultipleCallbackRespEntity(errors, multipleDetails);
     }
 
+    @PostMapping(value = "/listingsDateRangeMidEventValidation", consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "validates the date range the user selects for report/listing.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Accessed successfully",
+                    response = MultipleCallbackResponse.class),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public ResponseEntity<ListingCallbackResponse> listingsDateRangeMidEventValidation(
+            @RequestBody ListingRequest listingRequest,
+            @RequestHeader(value = "Authorization") String userToken) {
+            log.info("LISTING DATE RANGE VALIDATION ---> " + LOG_MESSAGE +
+                    listingRequest.getCaseDetails().getCaseId());
+
+            if (!verifyTokenService.verifyTokenSignature(userToken)) {
+                log.error(INVALID_TOKEN, userToken);
+                return ResponseEntity.status(FORBIDDEN.value()).build();
+            }
+
+            var caseData = listingRequest.getCaseDetails().getCaseData();
+
+        List<String> errors = eventValidationService.validateListingDateRange(
+                caseData.getListingDateFrom(),
+                caseData.getListingDateTo()
+        );
+
+        return getListingCallbackRespEntity(errors, caseData);
+    }
+
+
     @PostMapping(value = "/closeMultiple", consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Closes a multiple and sends updates to all singles to be closed.")
     @ApiResponses(value = {
@@ -555,4 +587,6 @@ public class ExcelActionsController {
 
         return getMultipleCallbackRespEntity(errors, multipleDetails);
     }
+
+
 }

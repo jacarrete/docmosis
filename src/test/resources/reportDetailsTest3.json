@@ -123,7 +123,7 @@
       }
     ],
     "localReportsDetailHdr": {
-      "hearingDate": "20 October 2020",
+      "hearingDate": "2020-10-20T10:00:00.000",
       "reportOffice": "Manchester",
       "elmoCaseReference": "111222",
       "multiplesTotal": "1",
@@ -135,6 +135,9 @@
       "ConFastCasesCompletedHearing": "8",
       "ConFastSessionDays": "3",
       "ConStdCasesCompletedHearing": "2",
+      "casesCompletedHearingTotal": "2",
+      "sessionDaysTotal": "6",
+      "completedPerSessionTotal": "1",
       "clerk": "Anne Fox",
       "hearingNumber": "1",
       "resp_others": "Mark Taylor2, Tony Jones, Steve Thomas"
@@ -142,7 +145,7 @@
     "localReportsDetail": [
       {
         "value": {
-          "hearingDate": "12 October 2020",
+          "hearingDate": "2020-10-12T10:00:00.000",
           "reportOffice": "Manchester",
           "elmoCaseReference": "1112",
           "multipleRef": "212323",
@@ -152,7 +155,7 @@
           "hearingType": "Hearing Type",
           "hearingJudge": "Judge Name2",
           "hearingClerk": "Hearing Clerk",
-          "conciliationTrackNo": "223",
+          "conciliationTrack": "No Conciliation",
           "clerk": "Anne Fox",
           "hearingNumber": "3",
           "resp_others": "Mark Taylor, Tony Jones, Steve Thomas"
@@ -161,7 +164,7 @@
       },
       {
         "value": {
-          "hearingDate": "15 October 2020",
+          "hearingDate": "2020-10-15T10:00:00.000",
           "reportOffice": "Manchester",
           "caseReference": "2122323/2020",
           "elmoCaseReference": "111332",
@@ -170,7 +173,7 @@
           "hearingJudge": "Judge Name",
           "clerk": "Anne Fox2",
           "hearingClerk": "Hearing Clerk",
-          "conciliationTrackNo": "222",
+          "conciliationTrack": "No Conciliation",
           "hearingNumber": "5",
           "resp_others": "Mark Taylor, Juan Miguel, Steve Thomas"
         },

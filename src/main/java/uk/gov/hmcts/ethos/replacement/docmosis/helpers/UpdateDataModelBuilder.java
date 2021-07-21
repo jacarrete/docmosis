@@ -30,6 +30,10 @@ public class UpdateDataModelBuilder {
                 .positionType(multipleData.getPositionType())
                 .receiptDate(multipleData.getReceiptDate())
                 .hearingStage(multipleData.getHearingStage())
+
+                .isRespondentRepRemovalUpdate(multipleData.getBatchRemoveRespondentRep())
+                .isClaimantRepRemovalUpdate(multipleData.getBatchRemoveClaimantRep())
+
                 .representativeClaimantType(getRepresentativeClaimantType(multipleData, caseData))
                 .jurCodesType(getJurCodesType(multipleData, caseData))
                 .respondentSumType(getRespondentSumType(multipleData, caseData))
@@ -110,7 +114,7 @@ public class UpdateDataModelBuilder {
         return null;
     }
 
-    private static RepresentedTypeR getRespondentRepType(MultipleData multipleData, CaseData caseData) {
+    public static RepresentedTypeR getRespondentRepType(MultipleData multipleData, CaseData caseData) {
         if (caseData == null) {
             return null;
         }

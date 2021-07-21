@@ -8,6 +8,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.ecm.common.model.ccd.CaseData;
 import uk.gov.hmcts.ecm.common.model.ccd.CaseDetails;
 import uk.gov.hmcts.ecm.common.model.ccd.types.CasePreAcceptType;
+import uk.gov.hmcts.ecm.common.model.listing.ListingData;
+import uk.gov.hmcts.ecm.common.model.listing.ListingDetails;
+import uk.gov.hmcts.ecm.common.model.listing.ListingRequest;
 import uk.gov.hmcts.ecm.common.model.multiples.MultipleData;
 
 import java.nio.file.Files;
@@ -42,6 +45,10 @@ public class EventValidationServiceTest {
     private CaseDetails caseDetails3;
     private CaseDetails caseDetails4;
     private CaseDetails caseDetails5;
+    private ListingRequest listingRequestValidDateRange;
+    private ListingRequest listingRequestInvalidDateRange;
+    private ListingRequest listingRequest31DaysInvalidRange;
+    private ListingRequest listingRequest30DaysValidRange;
 
     private CaseData caseData;
     private MultipleData multipleData;
@@ -55,6 +62,11 @@ public class EventValidationServiceTest {
         caseDetails3 = generateCaseDetails("caseDetailsTest3.json");
         caseDetails4 = generateCaseDetails("caseDetailsTest4.json");
         caseDetails5 = generateCaseDetails("caseDetailsTest5.json");
+
+        listingRequestValidDateRange = generateListingDetails("exampleListingV1.json");
+        listingRequestInvalidDateRange = generateListingDetails("exampleListingV3.json");
+        listingRequest31DaysInvalidRange = generateListingDetails("exampleListingV5.json");
+        listingRequest30DaysValidRange = generateListingDetails("exampleListingV4.json");
 
         caseData = new CaseData();
         multipleData = new MultipleData();
@@ -363,4 +375,56 @@ public class EventValidationServiceTest {
         return mapper.readValue(json, CaseDetails.class);
     }
 
+    private ListingRequest generateListingDetails(String jsonFileName) throws Exception {
+        String json = new String(Files.readAllBytes(Paths.get(Objects.requireNonNull(getClass().getClassLoader()
+                .getResource(jsonFileName)).toURI())));
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json, ListingRequest.class);
+    }
+
+    @Test
+    public void shouldValidateReportDateRangeValidDates() {
+
+        var listingsCase = listingRequestValidDateRange.getCaseDetails().getCaseData();
+        var errors = eventValidationService.validateListingDateRange(
+                listingsCase.getListingDateFrom(),
+                listingsCase.getListingDateTo()
+        );
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void shouldValidateReportDateRangeValidDates_30Days() {
+
+        var listingsCase = listingRequest30DaysValidRange.getCaseDetails().getCaseData();
+        var errors = eventValidationService.validateListingDateRange(
+                listingsCase.getListingDateFrom(),
+                listingsCase.getListingDateTo()
+        );
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void shouldValidateReportDateRangeInvalidDates() {
+
+        var listingsCase = listingRequestInvalidDateRange.getCaseDetails().getCaseData();
+        var errors = eventValidationService.validateListingDateRange(
+                listingsCase.getListingDateFrom(),
+                listingsCase.getListingDateTo()
+        );
+        assertEquals(1, errors.size());
+        assertEquals(INVALID_LISTING_DATE_RANGE_ERROR_MESSAGE, errors.get(0));
+    }
+
+    @Test
+    public void shouldValidateReportDateRangeInvalidDates_31Days() {
+
+        var listingsCase = listingRequest31DaysInvalidRange.getCaseDetails().getCaseData();
+        var errors = eventValidationService.validateListingDateRange(
+                listingsCase.getListingDateFrom(),
+                listingsCase.getListingDateTo()
+        );
+        assertEquals(1, errors.size());
+        assertEquals(INVALID_LISTING_DATE_RANGE_ERROR_MESSAGE, errors.get(0));
+    }
 }

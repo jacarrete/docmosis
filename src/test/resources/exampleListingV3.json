@@ -12,10 +12,10 @@
       "tribunalCorrespondenceFax" : "07577126570",
       "tribunalCorrespondenceDX" : "123456",
       "tribunalCorrespondenceEmail" : "ManchesterOfficeET@hmcts.gov.uk",
-      "listingDate": "2020-01-20",
-      "listingDateFrom": "2020-01-11",
+      "listingDate": "2021-10-20",
+      "listingDateFrom": "2020-11-12",
       "hearingDateType": "Range",
-      "listingDateTo":  "2020-01-20",
+      "listingDateTo":  "2021-10-18",
       "listingCollection": [
         {
           "value": {
@@ -131,7 +131,7 @@
       "listingVenue": "Manchester",
       "docMarkUp": "test doc markup -example listing version 3",
       "documentName":"test doc name",
-      "hearingDocType":"test hearing doc type"
+      "docType":"test hearing doc type"
     },
     "id": "232323232",
     "jurisdiction": "Employment",

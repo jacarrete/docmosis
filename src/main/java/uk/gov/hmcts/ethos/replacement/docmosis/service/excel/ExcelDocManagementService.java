@@ -43,7 +43,7 @@ public class ExcelDocManagementService {
     private final ScheduleCreationService scheduleCreationService;
 
     public void uploadExcelDocument(String userToken, MultipleData multipleData, byte[] excelBytes) {
-
+        log.info("Multiple Name is: " + multipleData.getMultipleName() + "for multiple reference: " + multipleData.getMultipleReference());
         URI documentSelfPath = documentManagementService.uploadDocument(userToken, excelBytes,
                 MultiplesHelper.generateExcelDocumentName(multipleData), APPLICATION_EXCEL_VALUE);
 
@@ -85,6 +85,7 @@ public class ExcelDocManagementService {
     public void writeAndUploadExcelDocument(List<?> multipleCollection, String userToken,
                                             MultipleData multipleData, List<String> subMultipleCollection) {
 
+        log.info("MultipleName is: " + multipleData.getMultipleName() + "for multiple reference: " + multipleData.getMultipleReference());
         byte[] excelBytes = excelCreationService.writeExcel(multipleCollection, subMultipleCollection,
                 multipleData.getLeadCase());
 

@@ -2,6 +2,8 @@ package uk.gov.hmcts.ethos.replacement.docmosis.service;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,6 +19,8 @@ import uk.gov.hmcts.ecm.common.model.ccd.types.CorrespondenceScotType;
 import uk.gov.hmcts.ecm.common.model.ccd.types.CorrespondenceType;
 import uk.gov.hmcts.ecm.common.model.ccd.types.RespondentSumType;
 import static uk.gov.hmcts.ecm.common.model.helper.Constants.*;
+
+import uk.gov.hmcts.ecm.common.model.listing.ListingData;
 import uk.gov.hmcts.ecm.common.model.multiples.MultipleData;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.DocumentHelper;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.Helper;
@@ -296,6 +300,21 @@ public class EventValidationService {
                         > Integer.parseInt(depositTypeItem.getValue().getDepositAmount()))) {
                         errors.add(DEPOSIT_REFUNDED_GREATER_DEPOSIT_ERROR);
                 }
+            }
+        }
+        return errors;
+    }
+
+    public List<String> validateListingDateRange(String listingFrom,  String listingTo){
+
+        List<String> errors = new ArrayList<>();
+        if (listingFrom != null && listingTo != null) {
+            var startDate = LocalDate.parse(listingFrom);
+            var endDate = LocalDate.parse(listingTo);
+            var numberOfDays = ChronoUnit.DAYS.between(startDate, endDate);
+            if(numberOfDays > 30)
+            {
+                errors.add(INVALID_LISTING_DATE_RANGE_ERROR_MESSAGE);
             }
         }
         return errors;

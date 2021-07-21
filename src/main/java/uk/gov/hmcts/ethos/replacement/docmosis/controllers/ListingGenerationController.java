@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.ecm.common.helpers.UtilHelper;
 import uk.gov.hmcts.ecm.common.model.ccd.CCDCallbackResponse;
 import uk.gov.hmcts.ecm.common.model.ccd.CCDRequest;
+import uk.gov.hmcts.ecm.common.model.ccd.DocumentInfo;
 import uk.gov.hmcts.ecm.common.model.listing.ListingCallbackResponse;
+import uk.gov.hmcts.ecm.common.model.listing.ListingData;
 import uk.gov.hmcts.ecm.common.model.listing.ListingRequest;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.Helper;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.ListingHelper;
@@ -137,31 +140,6 @@ public class ListingGenerationController {
         return getListingCallbackRespEntityErrors(errors, listingData);
     }
 
-    @PostMapping(value = "/generateReport", consumes = APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "generate data for selected report.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Accessed successfully",
-                    response = CCDCallbackResponse.class),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public ResponseEntity<ListingCallbackResponse> generateReport(
-            @RequestBody ListingRequest listingRequest,
-            @RequestHeader(value = "Authorization") String userToken) {
-        log.info("GENERATE REPORT ---> " + LOG_MESSAGE + listingRequest.getCaseDetails().getCaseId());
-
-        if (!verifyTokenService.verifyTokenSignature(userToken)) {
-            log.error(INVALID_TOKEN, userToken);
-            return ResponseEntity.status(FORBIDDEN.value()).build();
-        }
-
-        var listingData = listingService.generateReportData(listingRequest.getCaseDetails(), userToken);
-
-        return ResponseEntity.ok(ListingCallbackResponse.builder()
-                .data(listingData)
-                .build());
-    }
-
     @PostMapping(value = "/generateListingsDocSingleCases", consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "generate a listing document.")
     @ApiResponses(value = {
@@ -225,6 +203,66 @@ public class ListingGenerationController {
                 .build());
     }
 
+    @PostMapping(value = "/generateReport", consumes = APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "generate data for selected report.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Accessed successfully",
+                    response = CCDCallbackResponse.class),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public ResponseEntity<ListingCallbackResponse> generateReport(
+            @RequestBody ListingRequest listingRequest,
+            @RequestHeader(value = "Authorization") String userToken) {
+        log.info("GENERATE REPORT ---> " + LOG_MESSAGE + listingRequest.getCaseDetails().getCaseId());
+
+        if (!verifyTokenService.verifyTokenSignature(userToken)) {
+            log.error(INVALID_TOKEN, userToken);
+            return ResponseEntity.status(FORBIDDEN.value()).build();
+        }
+
+        var listingData = listingService.generateReportData(listingRequest.getCaseDetails(), userToken);
+
+        return getResponseEntity(listingData,listingRequest.getCaseDetails().getCaseTypeId(), userToken);
+
+    }
+
+    private ResponseEntity getResponseEntity(ListingData listingData, String caseTypeId, String userToken){
+        List<String> errorsList = new ArrayList<>();
+
+        if(hasNonEmptyListings(listingData)){
+            var documentInfo = getDocumentInfo(listingData, caseTypeId, userToken);
+
+            updateListingDocMarkUp(listingData, documentInfo);
+            return ResponseEntity.ok(ListingCallbackResponse.builder()
+                    .data(listingData)
+                    .significant_item(Helper.generateSignificantItem(documentInfo, errorsList))
+                    .build());
+        } else{
+            errorsList.add("No hearings have been found for your search criteria");
+            return ResponseEntity.ok(ListingCallbackResponse.builder()
+                    .errors(errorsList)
+                    .data(listingData)
+                    .build());
+        }
+    }
+
+    private void updateListingDocMarkUp(ListingData listingData, DocumentInfo documentInfo){
+        listingData.setDocMarkUp(documentInfo.getMarkUp());
+    }
+
+    private DocumentInfo getDocumentInfo(ListingData listingData, String caseTypeId, String userToken){
+        return listingService.processHearingDocument(listingData, caseTypeId, userToken);
+    }
+
+    private boolean hasNonEmptyListings(ListingData listingData) {
+
+        var isListingsCollNotEmpty = CollectionUtils.isNotEmpty(listingData.getListingCollection());
+        var isAllowedReportType = ListingHelper.isReportType(listingData.getReportType());
+
+        return (isListingsCollNotEmpty || isAllowedReportType);
+    }
+
     @PostMapping(value = "/generateHearingDocument", consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "generate a listing document.")
     @ApiResponses(value = {
@@ -243,24 +281,11 @@ public class ListingGenerationController {
             return ResponseEntity.status(FORBIDDEN.value()).build();
         }
 
-        List<String> errors = new ArrayList<>();
         var listingData = listingRequest.getCaseDetails().getCaseData();
-        if ((listingData.getListingCollection() != null && !listingData.getListingCollection().isEmpty())
-                || ListingHelper.isReportType(listingData.getReportType())) {
-            var documentInfo = listingService.processHearingDocument(
-                    listingData, listingRequest.getCaseDetails().getCaseTypeId(), userToken);
-            listingData.setDocMarkUp(documentInfo.getMarkUp());
-            return ResponseEntity.ok(ListingCallbackResponse.builder()
-                    .data(listingData)
-                    .significant_item(Helper.generateSignificantItem(documentInfo, errors))
-                    .build());
-        } else {
-            errors.add("No hearings have been found for your search criteria");
-            return ResponseEntity.ok(ListingCallbackResponse.builder()
-                    .errors(errors)
-                    .data(listingData)
-                    .build());
-        }
+        var caseTypeId = listingRequest.getCaseDetails().getCaseTypeId();
+
+        return getResponseEntity(listingData,caseTypeId, userToken);
+
     }
 
     @PostMapping(value = "/generateHearingDocumentConfirmation", consumes = APPLICATION_JSON_VALUE)

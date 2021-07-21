@@ -57,8 +57,19 @@ public class CallbackRespHelper {
     }
 
     @NotNull
+    public static ResponseEntity<ListingCallbackResponse> getListingCallbackRespEntity(
+            List<String> errors, ListingData listingData) {
+
+        return ResponseEntity.ok(ListingCallbackResponse.builder()
+                .data(listingData)
+                .errors(errors)
+                .build());
+    }
+
+    @NotNull
     public static ResponseEntity<MultipleCallbackResponse> getMultipleCallbackRespEntity(
             List<String> errors, MultipleDetails multipleDetails) {
+
         return ResponseEntity.ok(MultipleCallbackResponse.builder()
                 .errors(errors)
                 .data(multipleDetails.getCaseData())

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.ethos.replacement.docmosis.service;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,13 @@ import uk.gov.hmcts.ecm.common.model.ccd.DocumentInfo;
 import uk.gov.hmcts.ecm.common.model.ccd.SubmitEvent;
 import uk.gov.hmcts.ecm.common.model.ccd.items.DateListedTypeItem;
 import uk.gov.hmcts.ecm.common.model.ccd.items.HearingTypeItem;
+import static uk.gov.hmcts.ecm.common.model.helper.Constants.*;
 import uk.gov.hmcts.ecm.common.model.listing.ListingData;
 import uk.gov.hmcts.ecm.common.model.listing.ListingDetails;
 import uk.gov.hmcts.ecm.common.model.listing.items.ListingTypeItem;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.ListingHelper;
 import uk.gov.hmcts.ethos.replacement.docmosis.helpers.ReportHelper;
+import static uk.gov.hmcts.ethos.replacement.docmosis.helpers.ReportHelper.CASES_SEARCHED;
 import uk.gov.hmcts.ethos.replacement.docmosis.reports.CasesCompletedReport;
 
 import java.io.IOException;
@@ -27,10 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static uk.gov.hmcts.ecm.common.model.helper.Constants.*;
-import static uk.gov.hmcts.ethos.replacement.docmosis.helpers.ReportHelper.CASES_SEARCHED;
 
 @Slf4j
 @Service("listingService")
@@ -157,8 +156,16 @@ public class ListingService {
                 hearingTypeItem.getValue().getHearingNumber();
                 log.info("Hearing number: " + hearingTypeItem.getValue().getHearingNumber());
                 var dateListedTypeItem = hearingTypeItem.getValue().getHearingDateCollection().get(i);
-
-                if (!isListingValid(listingData, dateListedTypeItem)) {
+                boolean isListingVenueValid = isListingVenueValid(listingData, dateListedTypeItem);
+                boolean isListingDateValid = isListingDateValid(listingData, dateListedTypeItem);
+                log.info("isListingVenueValid: " + isListingVenueValid);
+                log.info("isListingDateValid: " + isListingDateValid);
+                var isListingStatusValid = true;
+                if (!showAllHearingType(listingData)) {
+                    isListingStatusValid = isListingStatusValid(dateListedTypeItem);
+                    log.info("isListingStatusValid: " + isListingStatusValid);
+                }
+                if (!isListingVenueValid || !isListingDateValid || !isListingStatusValid) {
                     continue;
                 }
                 var listingTypeItem = new ListingTypeItem();
@@ -172,11 +179,7 @@ public class ListingService {
         }
         return listingTypeItems;
     }
-    private boolean isListingValid(ListingData listingData, DateListedTypeItem dateListedTypeItem) {
-        return (isListingVenueValid(listingData, dateListedTypeItem)
-                && isListingDateValid(listingData, dateListedTypeItem)
-                && (!showAllHearingType(listingData) && isListingStatusValid(dateListedTypeItem)));
-    }
+
     public ListingData generateReportData(ListingDetails listingDetails, String authToken) {
 
         try {
