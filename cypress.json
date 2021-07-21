@@ -1,0 +1,8 @@
+{
+  "projectId": "5hfsed",
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
+  "env": {
+    "aatURL": "https://manage-case.aat.platform.hmcts.net"
+  }
+}
