@@ -225,7 +225,7 @@ dependencies {
 
 
     implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.1'
-    implementation group: 'io.github.openfeign', name: 'feign-core', version: '11.1'
+    implementation group: 'io.github.openfeign', name: 'feign-core', version: '11.5'
 
     implementation group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '6.0.0'
     implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.logging
